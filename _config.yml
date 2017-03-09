@@ -1,3 +1,7 @@
 name: Flex
 markdown: kramdown
 highlight: pygments
+url: http://www.isaacschultz.com
+collections:
+    melbourne:
+    
