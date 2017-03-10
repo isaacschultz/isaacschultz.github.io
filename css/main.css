@@ -11,7 +11,8 @@
 
 html, body {
   height: 100%;
-  width: 100%;
+  margin: 0;
+  padding: 0;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -32,6 +33,14 @@ a {
 
 a img {
   outline: none;
+}
+
+img {
+    padding: 0;
+    margin: 0 auto;
+	position: relative;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 a:hover {
@@ -284,6 +293,14 @@ a:hover {
 #sidebar-button:active,
 #sidebar-button:hover {
   opacity: 0.7;
+}
+
+.photo {
+    padding: 0;
+    margin: 0 auto;
+	position: relative;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 /*****************************************************************************/

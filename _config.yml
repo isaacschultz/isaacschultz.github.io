@@ -1,7 +1,20 @@
-name: Flex
-markdown: kramdown
+--- 
+collections: 
+  photos: 
+    output: true
+
+defaults:
+  - scope:
+      path: ""
+      type: photos
+    values:
+      layout: photo
+    permalink: /photos/index.html
+
+gems: [jekyll-paginate]
+
 highlight: pygments
-url: http://www.isaacschultz.com
-collections:
-    melbourne:
-    
+markdown: kramdown
+name: isaacschultz
+url: "http://www.isaacschultz.com"
+paginate: 3
