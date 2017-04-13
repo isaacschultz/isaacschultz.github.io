@@ -92,12 +92,6 @@ a:hover {
   line-height: 1.75em;
 }
 
-.main h1 {
-  padding-right: 11em;
-  padding-left: 11em;
-
-}
-
 
 /*****************************************************************************/
 /*
@@ -141,6 +135,16 @@ a:hover {
   overflow: hidden;
   float: center;
   text-align: center;
+}
+
+.main h1 {
+  text-align: center;
+  padding-bottom: 0.3em;
+  /*max-width: 100%;
+  
+  padding-right: 11em;
+  padding-left: 11em;*/
+  
 }
 
 /*****************************************************************************/
@@ -249,7 +253,7 @@ a:hover {
   -webkit-overflow-scrolling: touch;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 11em;
+  /*padding-right: 11em;*/
   padding-top: 2em;
 }
 
