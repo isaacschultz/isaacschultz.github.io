@@ -7,4 +7,3 @@ exif:
   location:
   name: "Street scene"
 ---
-Lorem ipsum dolor sit amet

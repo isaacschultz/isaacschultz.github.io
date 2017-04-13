@@ -7,4 +7,3 @@ exif:
   location:
   name: "Subway scene"
 ---
-Lorem ipsum
