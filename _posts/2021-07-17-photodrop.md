@@ -11,3 +11,11 @@ categories: posts
 I want to live in the mountains.
 
 ![waveforms](/assets/images/photographs/thumbnails/20210623_211557.jpg)
+
+
+
+
+
+
+
+
