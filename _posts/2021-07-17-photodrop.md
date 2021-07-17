@@ -12,6 +12,8 @@ I want to live in the mountains.
 
 [Also, testing an internal website link.](/_posts/2017-03-08-testpost.md)
 
+That didn't work. [Let me try this.]({% post_url 2017-03-08-testpost %})
+
 ![waveforms](/assets/images/photographs/thumbnails/20210623_211557.jpg)
 
 
