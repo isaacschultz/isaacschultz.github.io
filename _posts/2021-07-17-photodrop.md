@@ -10,6 +10,8 @@ categories: posts
 
 I want to live in the mountains.
 
+[Also, testing an internal website link.](/_posts/2017-03-08-testpost.md)
+
 ![waveforms](/assets/images/photographs/thumbnails/20210623_211557.jpg)
 
 
