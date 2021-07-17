@@ -1,0 +1,89 @@
+
+https://txt.fyi/+/462fb459/
+
+
+INITIAL SETUP git config --global user.name "Isaac Schultz"
+
+git config --global user.email "isaacschultz@live.com" git config --list
+
+//example of help syntax git add --help
+
+OFFLINE/LOCAL STUFF
+
+//For a new project. git init creates the git tracking folder git init
+
+git status //ignoring files from being tracked by git. supports wildcards.
+
+gitignore <file> //adding files to be committed to the staging area
+
+git add <filename> OR git add -A git status
+
+//remove files from the staging area git reset
+
+//to commit files currently in the staging area git commit -m "some message"
+
+git status //to display commit data over time
+
+git log
+
+ONLINE/COLLABORATIVE STUFF; tracking an existing remote project git clone <url> <location to clone>
+
+//e.g. 'git clone https://github.com/isaacschultz/isaacschultz.github.io .' to clone to current working directory
+
+//to show the locations of fetch and push locations of a repository git remote -v
+
+//to show all of the branches in the repository - locally and remotely git branch -a
+
+//displaying differences after a change is made to code git diff
+
+git status
+
+BASIC FULL SEQUENCE OF EVENTS
+
+Update code locally
+git add -A
+git commit -m "message"
+//files are now committed locally; now we push to remote repository //git pull carried out before git push in case someone else made changes since the last time we pulled from the repo
+
+git pull origin master
+git push origin master
+BRANCHING
+
+//create a branch git branch <branch name>
+
+//check out created branch git checkout <branch name>
+
+//list local branches git branch
+
+//when a branch is checked out, original workflow applies;
+
+git add -A
+git commit -m "message"
+//changes are now committed to the local branch with name <name>. No effect on local master branch or remote repository.
+//pushing a branch to the remote repository
+
+git push -u origin <branch name>
+//"git branch -a" will now display both local and remote copies of the branch.
+
+MERGE A BRANCH WITH THE MASTER
+
+git checkout master
+git pull origin master
+//display what has been merged
+
+git branch --merged
+git merge <branch name>
+//display what has been merged
+git branch --merged
+// push newly merged local master to the remote repository master
+git push origin master
+DELETE LOCAL BRANCH //display merged branches
+
+git branch --merged
+//delete local branch
+git branch -d <branch name>
+DELETE A REMOTE REPOSITORY BRANCH //display all branches; note that the remote branch will still exist
+
+git branch -a
+//delete remote repository branch
+git push origin --delete <branch name>
