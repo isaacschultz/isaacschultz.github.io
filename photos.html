@@ -2,11 +2,9 @@
 layout: gallery
 permalink: /photos/index.html
 ---
-  <div id="page-info">
-    <div id="info-container">
-      <h1 id="title">{{ page.title }}</h1>
-    </div>
-  </div>
+
+{% assign content = page.content %}
+{% include gallery.html %}
 
 <ul>
   {% assign sorted_photos = site.photos | sort: 'rating', 'last' %}
