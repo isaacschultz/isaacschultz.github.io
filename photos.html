@@ -3,9 +3,6 @@ layout: gallery
 permalink: /photos/index.html
 ---
 
-{% assign content = page.content %}
-{% include gallery.html %}
-
 <ul>
   {% assign sorted_photos = site.photos | sort: 'rating', 'last' %}
   {% for photo in sorted_photos %}
