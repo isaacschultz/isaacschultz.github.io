@@ -16,5 +16,5 @@ gems: [jekyll-paginate]
 highlight: pygments
 markdown: kramdown
 name: isaacschultz
-url: "http://www.isaacschultz.com"
+url: "https://www.isaacschultz.com"
 paginate: 3
