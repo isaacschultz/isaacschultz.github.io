@@ -284,9 +284,9 @@ a:hover {
 
 .post-date {
   color: #8a8a8a;
-  font-family: 'Bodoni Moda', serif;
+  font-family: 'Lato', serif;
   font-weight: 600;
-  font-size: 0.65em;
+  font-size: 0.75em;
   display: block;
   text-transform: uppercase;
 }
@@ -313,8 +313,36 @@ a:hover {
     border: none;
 }
 
+.photo a {
+    position: relative;
+    display: block;
+}
+
 .photo img {
     border: none;
+    display: block;
+    transition: filter 0.3s ease;
+}
+
+.photo a:hover img {
+    filter: brightness(0.6);
+}
+
+.photo-title {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: white;
+    font-size: 1.2em;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.photo a:hover .photo-title {
+    opacity: 1;
 }
 
 /*****************************************************************************/

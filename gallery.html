@@ -8,8 +8,9 @@ permalink: /gallery/index.html
   {% assign sorted_photos = site.photos | sort: 'rating', 'last' %}
   {% for photo in sorted_photos %}
 	<div class = "photo">
-		<a href="/assets/images/photographs/{{ photo.image }}" target="_blank">
+		<a href="/assets/images/photographs/originals/{{ photo.image }}" target="_blank">
 		  <img src="/assets/images/photographs/thumbnails/{{ photo.image }}" alt="{{ photo.title }}" />
+		  <span class="photo-title">{{ photo.title }}</span>
 		</a>
 	</div>
   {% endfor %}
