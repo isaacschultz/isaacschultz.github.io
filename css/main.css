@@ -19,7 +19,7 @@ html, body {
 body {
   color: #4a4a4a;
   background-color: #fafbfc;
-  font-family: 'Raleway', Arial, sans-serif;
+  font-family: 'Faculty Glyphic', serif;
   font-weight: 400;
   font-size: 0.85em;
   overflow: hidden;
@@ -121,7 +121,6 @@ a:hover {
 }
 
 .posts {
-  border-top: 1px solid #e7e7e7;
   margin-top: 1em;
   padding-top: 1.5em;
   padding-bottom: 1.25em;
@@ -129,7 +128,6 @@ a:hover {
 
 .footer {
   font-size: 0.95em;
-  border-top: 1px solid #e7e7e7;
   padding-top: 1.25em;
   padding-bottom: 1.5em;
   overflow: hidden;
@@ -208,7 +206,7 @@ a:hover {
 }
 
 .post p {
-  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-family: 'Bodoni Moda', serif;
   font-size: 16px;
   margin-bottom: 1.45em;
   text-align: justify;
@@ -262,7 +260,6 @@ a:hover {
   width: 14%;
   padding-left: 11em;
   padding-right: 2.125em;
-  border-right: 1px solid #e7e7e7;
 }
 
 .content {
@@ -287,7 +284,7 @@ a:hover {
 
 .post-date {
   color: #8a8a8a;
-  font-family: Monaco, "Courier New", monospace;
+  font-family: 'Bodoni Moda', serif;
   font-weight: 600;
   font-size: 0.65em;
   display: block;
@@ -300,7 +297,6 @@ a:hover {
   display: none;
   padding: 15px 5px 0px 0px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #e7e7e7;
 }
 
 #sidebar-button:active,
@@ -310,10 +306,15 @@ a:hover {
 
 .photo {
     padding: 0;
-    margin: 0 auto;
+    margin: 0 auto 2.5em auto;
 	position: relative;
     max-height: 100%;
     max-width: 100%;
+    border: none;
+}
+
+.photo img {
+    border: none;
 }
 
 /*****************************************************************************/

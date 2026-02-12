@@ -1,14 +1,14 @@
 ---
 layout: gallery
 title: Gallery
-permalink: /photos/index.html
+permalink: /gallery/index.html
 ---
 
 <ul>
   {% assign sorted_photos = site.photos | sort: 'rating', 'last' %}
   {% for photo in sorted_photos %}
 	<div class = "photo">
-		<a href="{{ photo.url | prepend: site.baseurl }}">
+		<a href="/assets/images/photographs/{{ photo.image }}" target="_blank">
 		  <img src="/assets/images/photographs/thumbnails/{{ photo.image }}" alt="{{ photo.title }}" />
 		</a>
 	</div>

@@ -9,7 +9,7 @@ defaults:
       type: photos
     values:
       layout: photo
-    permalink: /photos/index.html
+    permalink: /gallery/index.html
 
 gems: [jekyll-paginate]
 
