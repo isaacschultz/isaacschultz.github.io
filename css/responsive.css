@@ -47,6 +47,12 @@
   }
 }
 
+@media (max-width:640px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /**
  * iPhone width
  **/

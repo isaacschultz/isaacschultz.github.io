@@ -304,12 +304,19 @@ a:hover {
   opacity: 0.7;
 }
 
+.photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5em;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
 .photo {
     padding: 0;
-    margin: 0 auto 2.5em auto;
+    margin: 0;
 	position: relative;
-    max-height: 100%;
-    max-width: 100%;
     border: none;
 }
 
@@ -322,6 +329,8 @@ a:hover {
 .photo img {
     border: none;
     display: block;
+    width: 100%;
+    height: auto;
     transition: filter 0.3s ease;
     will-change: filter;
     transform: translateZ(0);
