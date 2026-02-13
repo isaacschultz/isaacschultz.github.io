@@ -9,7 +9,7 @@ permalink: /gallery/index.html
   {% for entry in years %}
 	<div class="photo">
 		<a href="/gallery/{{ entry.year }}/">
-		  <img src="/assets/images/photographs/originals/{{ entry.cover_image }}" alt="{{ entry.year }}" />
+		  <img src="/assets/images/photographs/{{ entry.year }}/{{ entry.cover_image }}" alt="{{ entry.year }}" />
 		  <span class="photo-title">{{ entry.year }}</span>
 		</a>
 	</div>
