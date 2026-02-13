@@ -5,12 +5,12 @@ permalink: /gallery/index.html
 ---
 
 <div class="photo-grid">
-  {% assign sorted_photos = site.photos | sort: 'rating', 'last' %}
-  {% for photo in sorted_photos %}
+  {% assign years = site.data.gallery_years | sort: 'year' | reverse %}
+  {% for entry in years %}
 	<div class="photo">
-		<a href="/assets/images/photographs/originals/{{ photo.image }}" target="_blank">
-		  <img src="/assets/images/photographs/thumbnails/{{ photo.image }}" alt="{{ photo.title }}" />
-		  <span class="photo-title">{{ photo.title }}</span>
+		<a href="/gallery/{{ entry.year }}/">
+		  <img src="/assets/images/photographs/thumbnails/{{ entry.cover_image }}" alt="{{ entry.year }}" />
+		  <span class="photo-title">{{ entry.year }}</span>
 		</a>
 	</div>
   {% endfor %}
