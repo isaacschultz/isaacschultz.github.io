@@ -220,7 +220,7 @@ a:hover {
 
 .post a,
 #about a {
-  border-bottom: 1px solid #8085C1;
+  border-bottom: none;
 }
 
 .post a:hover {
@@ -373,7 +373,6 @@ a:hover {
     position: relative;
     display: block;
     overflow: hidden;
-    border-bottom: none !important;
 }
 
 .photo img {
