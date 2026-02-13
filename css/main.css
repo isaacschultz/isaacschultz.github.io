@@ -284,6 +284,24 @@ a:hover {
   padding-top: 2em;
 }
 
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: #000;
+  border-radius: 0;
+}
+
+.content {
+  scrollbar-width: thin;
+  scrollbar-color: #000 transparent;
+}
+
 .sidebar {
   float: left;
   width: 14%;
@@ -348,12 +366,14 @@ a:hover {
     margin: 0;
 	position: relative;
     border: none;
+    overflow: hidden;
 }
 
 .photo a {
     position: relative;
     display: block;
     overflow: hidden;
+    border-bottom: none !important;
 }
 
 .photo img {
@@ -364,6 +384,8 @@ a:hover {
     transition: filter 0.3s ease;
     will-change: filter;
     transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .photo a:hover img {
