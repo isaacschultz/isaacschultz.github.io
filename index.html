@@ -1,8 +1,16 @@
 ---
-layout: default
-title: Home
+layout: gallery
+title: Gallery
 ---
 
-{% assign page = site.posts.first %}
-{% assign content = page.content %}
-{% include post.html %}
+<div class="photo-grid">
+  {% assign years = site.data.gallery_years | sort: 'year' | reverse %}
+  {% for entry in years %}
+	<div class="photo">
+		<a href="/gallery/{{ entry.year }}/">
+		  <img src="/assets/images/photographs/originals/{{ entry.cover_image }}" alt="{{ entry.year }}" />
+		  <span class="photo-title">{{ entry.year }}</span>
+		</a>
+	</div>
+  {% endfor %}
+</div>

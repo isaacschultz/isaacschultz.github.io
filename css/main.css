@@ -135,6 +135,27 @@ a:hover {
   text-align: center;
 }
 
+.footer-link {
+  color: #444;
+}
+
+.footer-link:hover {
+  color: #777;
+}
+
+.footer-link-gallery {
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+.footer-gallery-row {
+  margin-bottom: 0.5em;
+}
+
+.footer-other-row {
+  font-size: 0.9em;
+}
+
 .main h1 {
   text-align: center;
   padding-bottom: 0.3em;
@@ -181,6 +202,13 @@ a:hover {
   line-height: 24px;
   max-width: 725px;
   clear: both;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.post h1,
+.post h2,
+.post h3 {
+  font-family: 'Faculty Glyphic', sans-serif;
 }
 
 .post h2 {
@@ -206,7 +234,7 @@ a:hover {
 }
 
 .post p {
-  font-family: 'Faculty Glyphic', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 16px;
   margin-bottom: 1.45em;
   text-align: justify;
@@ -264,6 +292,7 @@ a:hover {
 
 .content {
   padding-left: 2.125em;
+  max-width: 900px;
 }
 
 .header {
