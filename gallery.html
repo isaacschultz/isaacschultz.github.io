@@ -8,7 +8,7 @@ permalink: /gallery/index.html
   {% for entry in site.data.gallery_categories %}
 	<div class="photo">
 		<a href="/gallery/{{ entry.slug }}/">
-		  <img src="/assets/images/photographs/{{ entry.cover_year }}/{{ entry.cover_image }}" alt="{{ entry.name }}" />
+		  <img src="/assets/images/photographs/{{ entry.slug }}/{{ entry.cover_image }}" alt="{{ entry.name }}" />
 		  <span class="photo-title">{{ entry.name }}</span>
 		</a>
 	</div>

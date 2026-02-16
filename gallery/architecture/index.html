@@ -6,15 +6,12 @@ permalink: /gallery/architecture/index.html
 ---
 
 <div class="photo-grid">
-  {% assign cat_photos = site.photos | where: "category", "architecture" %}
-  {% assign years = cat_photos | map: "year" | uniq | sort | reverse %}
-  {% for year in years %}
-    {% assign year_photos = cat_photos | where: "year", year %}
-    {% assign cover = year_photos | first %}
+  {% assign sorted_photos = site.photos | where: "category", "architecture" | sort: 'rating', 'last' %}
+  {% for photo in sorted_photos %}
 	<div class="photo">
-		<a href="/gallery/architecture/{{ year }}/">
-		  <img src="/assets/images/photographs/{{ year }}/{{ cover.image }}" alt="{{ year }}" />
-		  <span class="photo-title">{{ year }}</span>
+		<a href="/assets/images/photographs/architecture/{{ photo.image }}" target="_blank">
+		  <img src="/assets/images/photographs/architecture/{{ photo.image }}" alt="{{ photo.title }}" />
+		  <span class="photo-title">{{ photo.title }}</span>
 		</a>
 	</div>
   {% endfor %}
