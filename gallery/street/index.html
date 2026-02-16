@@ -1,0 +1,21 @@
+---
+layout: gallery
+title: "Street"
+category: street
+permalink: /gallery/street/index.html
+---
+
+<div class="photo-grid">
+  {% assign cat_photos = site.photos | where: "category", "street" %}
+  {% assign years = cat_photos | map: "year" | uniq | sort | reverse %}
+  {% for year in years %}
+    {% assign year_photos = cat_photos | where: "year", year %}
+    {% assign cover = year_photos | first %}
+	<div class="photo">
+		<a href="/gallery/street/{{ year }}/">
+		  <img src="/assets/images/photographs/{{ year }}/{{ cover.image }}" alt="{{ year }}" />
+		  <span class="photo-title">{{ year }}</span>
+		</a>
+	</div>
+  {% endfor %}
+</div>

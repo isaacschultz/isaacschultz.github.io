@@ -1,12 +1,13 @@
 ---
 layout: gallery
-title: "Gallery - 2026"
+title: "Street - 2026"
 year: 2026
-permalink: /gallery/2026/index.html
+category: street
+permalink: /gallery/street/2026/index.html
 ---
 
 <div class="photo-grid">
-  {% assign sorted_photos = site.photos | where: "year", 2026 | sort: 'rating', 'last' %}
+  {% assign sorted_photos = site.photos | where: "category", "street" | where: "year", 2026 | sort: 'rating', 'last' %}
   {% for photo in sorted_photos %}
 	<div class="photo">
 		<a href="/assets/images/photographs/2026/{{ photo.image }}" target="_blank">
