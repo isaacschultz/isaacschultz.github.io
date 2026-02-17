@@ -3,7 +3,7 @@ title: "The Grace"
 year: 2026
 category: "architecture"
 priority: 2
-image: "DSCF0165.jpg"
+image: "the-grace.jpg"
 exif:
   camera: "Pentax X-T20"
   location:

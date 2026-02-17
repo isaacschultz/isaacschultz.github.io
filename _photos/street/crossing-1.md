@@ -3,7 +3,7 @@ title: "Crossing 1"
 year: 2026
 category: "street"
 priority: 1
-image: "20260217_070453.jpg"
+image: "crossing-1.jpg"
 exif:
   camera: "Fuji X-T20"
   location:
