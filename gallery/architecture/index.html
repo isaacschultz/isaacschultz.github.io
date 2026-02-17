@@ -6,7 +6,7 @@ permalink: /gallery/architecture/index.html
 ---
 
 <div class="photo-grid">
-  {% assign sorted_photos = site.photos | where: "category", "architecture" | sort: 'rating', 'last' %}
+  {% assign sorted_photos = site.photos | where: "category", "architecture" | sort: 'priority' %}
   {% for photo in sorted_photos %}
 	<div class="photo">
 		<a href="/assets/photographs/architecture/{{ photo.image }}" target="_blank">

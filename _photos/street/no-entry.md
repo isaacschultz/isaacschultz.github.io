@@ -2,6 +2,7 @@
 title: "No Entry"
 year: 2026
 category: "street"
+priority: 2
 image: "DSCF0171.jpg"
 exif:
   camera: "Pentax X-T20"
