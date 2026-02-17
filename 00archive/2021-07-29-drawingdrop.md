@@ -9,7 +9,7 @@ categories: posts
 ### Some drawings from 2018
 
 
-![waveforms](/assets/images/drawings/cathedral_1.png)
+![waveforms](/assets/site-images/drawings/cathedral_1.png)
 
 
-![waveforms](/assets/images/drawings/memorial_1.png)
+![waveforms](/assets/site-images/drawings/memorial_1.png)

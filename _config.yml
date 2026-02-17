@@ -1,7 +1,7 @@
---- 
-collections: 
-  photos: 
-    output: true
+---
+collections:
+  photos:
+    output: false
 
 defaults:
   - scope:
@@ -9,11 +9,10 @@ defaults:
       type: photos
     values:
       layout: photo
-    permalink: /gallery/index.html
 
-gems: [jekyll-paginate]
+plugins: [jekyll-paginate]
 
-highlight: pygments
+highlight: rouge
 markdown: kramdown
 name: isaacschultz
 url: "https://www.isaacschultz.com"

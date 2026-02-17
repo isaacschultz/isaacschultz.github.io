@@ -1,0 +1,16 @@
+---
+layout: gallery
+title: Gallery
+permalink: /gallery/index.html
+---
+
+<div class="photo-grid">
+  {% for entry in site.data.gallery_categories %}
+	<div class="photo">
+		<a href="/gallery/{{ entry.slug }}/">
+		  <img src="/assets/photographs/{{ entry.slug }}/{{ entry.cover_image }}" alt="{{ entry.name }}" loading="lazy" width="800" height="600" />
+		  <span class="photo-title">{{ entry.name }}</span>
+		</a>
+	</div>
+  {% endfor %}
+</div>

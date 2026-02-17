@@ -9,8 +9,8 @@ permalink: /gallery/street/index.html
   {% assign sorted_photos = site.photos | where: "category", "street" | sort: 'rating', 'last' %}
   {% for photo in sorted_photos %}
 	<div class="photo">
-		<a href="/assets/images/photographs/street/{{ photo.image }}" target="_blank">
-		  <img src="/assets/images/photographs/street/{{ photo.image }}" alt="{{ photo.title }}" />
+		<a href="/assets/photographs/street/{{ photo.image }}" target="_blank">
+		  <img src="/assets/photographs/street/{{ photo.image }}" alt="{{ photo.title }}" loading="lazy" width="800" height="600" />
 		  <span class="photo-title">{{ photo.title }}</span>
 		</a>
 	</div>

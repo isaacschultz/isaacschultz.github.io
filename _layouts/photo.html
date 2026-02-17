@@ -2,7 +2,7 @@
 layout: gallery
 ---
 <figure>
-	<img src="/assets/images/photographs/{{ page.category }}/{{ page.image }}" alt="{{ page.title }}" />
+	<img src="/assets/photographs/{{ page.category }}/{{ page.image }}" alt="{{ page.title }}" />
 	<figcaption>{% if page.exif.dateTaken %}on {{ page.exif.dateTaken | date: "%-d %B %Y" }}{% endif %} {% if page.exif.location.name %}, {{ page.exif.location.name }}{% endif %}</figcaption>
 </figure>
 {{ content }}

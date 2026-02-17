@@ -12,24 +12,18 @@
       <!-- Custom CSS -->
       <link rel="stylesheet" href="/css/main.css">
 
-      <!-- Responsive CSS -->
-      <link rel="stylesheet" href="/css/responsive.css">
-
       <!-- Google Fonts -->
-      <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700' rel='stylesheet' type='text/css'>
-      <link href='https://fonts.googleapis.com/css?family=Raleway:300,400,700' rel='stylesheet' type='text/css'>
-      <link href='https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&display=swap' rel='stylesheet' type='text/css'>
       <link href='https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap' rel='stylesheet' type='text/css'>
-      <link href='https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <div class="site">
 	  <div class="main" id="main">
-		<h1 class="banner"><img id="banner" src="/assets/images/banner2.png"></a></h1>
+		<h1 class="banner"><img id="banner" src="/assets/site-images/banner2.png" width="1000" height="186" alt=""></a></h1>
 	  </div>
       <div class="sidebar" id="sidebar">
         <div class="header">
-          <h1 class="title"><a href="/"><img id="logo" src="/assets/images/logo4.png"></a></h1>
+          <h1 class="title"><a href="/"><img id="logo" src="/assets/site-images/logo4.png" width="540" height="540" alt="Home"></a></h1>
           <span class="tagline"></span>
         </div>
         <div class="posts">
@@ -60,6 +54,10 @@
         {{ content }}
 
     </div>
-    <script src="/scripts/responsive.js" type="text/javascript"></script>
+    <script>
+      document.getElementById("sidebar-button").addEventListener("click", function() {
+        document.getElementById("sidebar").classList.toggle("slideIn");
+      });
+    </script>
   </body>
 </html>
