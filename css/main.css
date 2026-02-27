@@ -43,6 +43,12 @@ img {
     max-width: 100%;
 }
 
+#banner {
+    width: 100%;
+    height: auto;
+    max-height: none;
+}
+
 a:hover {
   color: #555;
   border: none;
