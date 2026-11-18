@@ -5,7 +5,7 @@ category: architecture
 permalink: /gallery/architecture/index.html
 ---
 
-<div class="photo-grid">
+<div class="photo-grid photo-grid--full">
   {% assign sorted_photos = site.photos | where: "category", "architecture" | sort: 'priority' %}
   {% for photo in sorted_photos %}
 	<div class="photo">

@@ -5,7 +5,7 @@ category: street
 permalink: /gallery/street/index.html
 ---
 
-<div class="photo-grid">
+<div class="photo-grid photo-grid--full">
   {% assign sorted_photos = site.photos | where: "category", "street" | sort: 'priority' %}
   {% for photo in sorted_photos %}
 	<div class="photo">

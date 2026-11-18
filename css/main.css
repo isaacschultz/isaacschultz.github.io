@@ -401,6 +401,12 @@ a:hover {
     filter: brightness(1);
 }
 
+/* Sub-galleries: show images at full brightness, no dimming */
+.photo-grid--full .photo img,
+.photo-grid--full .photo a:hover img {
+    filter: none;
+}
+
 .photo-title {
     position: absolute;
     top: 15px;
