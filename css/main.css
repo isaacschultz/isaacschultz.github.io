@@ -19,7 +19,7 @@ html, body {
 body {
   color: #4a4a4a;
   background-color: #fafbfc;
-  font-family: 'Faculty Glyphic', sans-serif;
+  font-family: 'Lora', serif;
   font-weight: 400;
   font-size: 0.85em;
   overflow: hidden;
@@ -201,13 +201,13 @@ a:hover {
   line-height: 24px;
   max-width: 725px;
   clear: both;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Lora', serif;
 }
 
 .post h1,
 .post h2,
 .post h3 {
-  font-family: 'Faculty Glyphic', sans-serif;
+  font-family: 'Lora', serif;
 }
 
 .post h2 {
@@ -233,7 +233,7 @@ a:hover {
 }
 
 .post p {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Lora', serif;
   font-size: 16px;
   margin-bottom: 1.45em;
   text-align: justify;
@@ -341,7 +341,7 @@ a:hover {
 
 .post-date {
   color: #8a8a8a;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Lora', serif;
   font-weight: 600;
   font-size: 0.75em;
   display: block;
