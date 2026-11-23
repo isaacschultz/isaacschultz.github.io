@@ -14,6 +14,15 @@
 
       <!-- Google Fonts -->
       <link href='https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap' rel='stylesheet' type='text/css'>
+
+      <!-- Apply saved theme before first paint to avoid a light flash -->
+      <script>
+        try {
+          if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {}
+      </script>
   </head>
   <body>
     <div class="site">
@@ -22,7 +31,7 @@
 	  </div>
       <div class="sidebar" id="sidebar">
         <div class="header">
-          <h1 class="title"><a href="/"><img id="logo" src="/assets/site-images/logo4.png" width="540" height="540" alt="Home"></a></h1>
+          <h1 class="title"><a href="/"><img class="logo logo-light" src="/assets/site-images/logo4.png" width="540" height="540" alt="Home"><img class="logo logo-dark" src="/assets/site-images/logo4-red.png" width="540" height="540" alt="Home"></a></h1>
           <span class="tagline"></span>
         </div>
         <div class="posts">
@@ -49,6 +58,9 @@
               <a href="https://txt.fyi/+/499fc0c5/" class="footer-link">About</a> <span class="separator">&bull;</span>
               <a href="http://www.linkedin.com/in/isaac-schultz-1b20ab43" class="footer-link">LinkedIn</a>
             </div>
+            <div class="footer-theme-row">
+              <button type="button" id="theme-toggle" class="footer-link theme-toggle" aria-pressed="false">Dark mode</button>
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +68,31 @@
         {{ content }}
 
     </div>
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var toggle = document.getElementById("theme-toggle");
+
+        function render() {
+          var dark = root.getAttribute("data-theme") === "dark";
+          toggle.textContent = dark ? "Light mode" : "Dark mode";
+          toggle.setAttribute("aria-pressed", dark ? "true" : "false");
+        }
+
+        toggle.addEventListener("click", function () {
+          var dark = root.getAttribute("data-theme") !== "dark";
+          if (dark) {
+            root.setAttribute("data-theme", "dark");
+          } else {
+            root.removeAttribute("data-theme");
+          }
+          try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch (e) {}
+          render();
+        });
+
+        render();
+      })();
+    </script>
     <script>
       document.getElementById("sidebar-button").addEventListener("click", function() {
         document.getElementById("sidebar").classList.toggle("slideIn");

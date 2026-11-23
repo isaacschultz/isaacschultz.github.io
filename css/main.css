@@ -64,9 +64,13 @@ a:hover {
 /* Home
 /*
 /*****************************************************************************/
-#logo {
+.logo {
   max-width: 128px;
   height: auto;
+}
+
+.logo-dark {
+  display: none;
 }
 
 .posts a {
@@ -153,6 +157,19 @@ a:hover {
 
 .footer-other-row {
   font-size: 0.9em;
+}
+
+.footer-theme-row {
+  margin-top: 0.75em;
+  font-size: 0.9em;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
 .main h1 {
@@ -472,6 +489,87 @@ a:hover {
 
 /*****************************************************************************/
 /*
+/* Dark mode (set via data-theme="dark" on <html>)
+/*
+/*****************************************************************************/
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body {
+  color: #ded7c9;
+  background-color: #0d0d0d;
+}
+
+html[data-theme="dark"] ::selection {
+  background-color: #f41616;
+  color: #ffffff;
+}
+
+html[data-theme="dark"] a {
+  color: #a9addf;
+}
+
+html[data-theme="dark"] a:hover,
+html[data-theme="dark"] .posts a:hover,
+html[data-theme="dark"] .footer-link:hover {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .posts a,
+html[data-theme="dark"] .footer-link,
+html[data-theme="dark"] #title {
+  color: #ded7c9;
+}
+
+html[data-theme="dark"] .separator,
+html[data-theme="dark"] .tagline,
+html[data-theme="dark"] #date,
+html[data-theme="dark"] .post-date,
+html[data-theme="dark"] .colophon p {
+  color: #9a9a9a;
+}
+
+/* Swap to the red logo */
+html[data-theme="dark"] .logo-light {
+  display: none;
+}
+
+html[data-theme="dark"] .logo-dark {
+  display: inline;
+}
+
+/* Black-ink menu icon on transparency: flip to white */
+html[data-theme="dark"] #sidebar-button img {
+  filter: invert(1);
+}
+
+html[data-theme="dark"] .post pre,
+html[data-theme="dark"] .post code {
+  border-color: #3a3b42;
+  background-color: #24252b;
+}
+
+html[data-theme="dark"] .content::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+}
+
+html[data-theme="dark"] .content {
+  scrollbar-color: #d4d4d4 transparent;
+}
+
+html[data-theme="dark"] .colophon {
+  border-top-color: #333;
+}
+
+html[data-theme="dark"] .visionboard-frame {
+  border-color: #33353b;
+  background: #1e1f23;
+}
+
+/*****************************************************************************/
+/*
 /* Responsive
 /*
 /*****************************************************************************/
@@ -495,7 +593,7 @@ a:hover {
 }
 
 @media (max-width:1090px) {
-  #logo {
+  .logo {
     max-width: 100px;
   }
 
@@ -530,7 +628,7 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
-  #logo {
+  .logo {
     max-width: 75px;
   }
 
