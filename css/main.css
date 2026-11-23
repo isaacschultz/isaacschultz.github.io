@@ -223,10 +223,10 @@ a:hover {
   font-family: 'Ubuntu Mono', monospace;
 }
 
-/* Libre Caslon Display only ships a 400 weight; avoid faux bold */
+/* Headings use Playfair Display at its bold (700) weight, the only one loaded */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Libre Caslon Display', serif;
-  font-weight: 400;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
 }
 
 .post h2 {
