@@ -3,7 +3,7 @@
     <img src="/assets/site-images/sidebar-button.png" width="32" height="32" alt="Menu">
   </div>
   <div id="post-info">
-    {% if page.cover %}
+    {% if page.cover and page.cover != "null.png" %}
     <div id="cover-photo-container">
       <img id="cover-photo" src="/assets/site-images/{{ page.cover }}">
     </div>
