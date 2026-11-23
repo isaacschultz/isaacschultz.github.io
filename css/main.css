@@ -152,7 +152,7 @@ a:hover {
 }
 
 .footer-visionboard-row {
-  margin-bottom: 0.5em;
+  margin-bottom: 1.5em;
 }
 
 .footer-other-row {
@@ -165,10 +165,12 @@ a:hover {
 }
 
 .theme-toggle {
+  display: inline-flex;
   background: none;
   border: none;
-  padding: 0;
+  padding: 4px;
   font: inherit;
+  line-height: 0;
   cursor: pointer;
 }
 
@@ -221,10 +223,10 @@ a:hover {
   font-family: 'Lora', serif;
 }
 
-.post h1,
-.post h2,
-.post h3 {
-  font-family: 'Lora', serif;
+/* Instrument Serif only ships a 400 weight; avoid faux bold */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
 }
 
 .post h2 {
@@ -521,6 +523,17 @@ html[data-theme="dark"] .posts a,
 html[data-theme="dark"] .footer-link,
 html[data-theme="dark"] #title {
   color: #ded7c9;
+}
+
+/* Visited links in posts and the sidebar post list (not footer nav) */
+html[data-theme="dark"] .post a:visited,
+html[data-theme="dark"] .posts a:visited {
+  color: #a3324a;
+}
+
+html[data-theme="dark"] .post a:visited:hover,
+html[data-theme="dark"] .posts a:visited:hover {
+  color: #ffffff;
 }
 
 html[data-theme="dark"] .separator,

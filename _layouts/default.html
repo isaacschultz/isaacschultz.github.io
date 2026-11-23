@@ -13,15 +13,19 @@
       <link rel="stylesheet" href="/css/main.css">
 
       <!-- Google Fonts -->
-      <link href='https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap' rel='stylesheet' type='text/css'>
 
-      <!-- Apply saved theme before first paint to avoid a light flash -->
+      <!-- Dark by default; apply before first paint to avoid a light flash -->
       <script>
-        try {
-          if (localStorage.getItem('theme') === 'dark') {
+        (function () {
+          var theme = 'dark';
+          try {
+            if (localStorage.getItem('theme') === 'light') theme = 'light';
+          } catch (e) {}
+          if (theme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
           }
-        } catch (e) {}
+        })();
       </script>
   </head>
   <body>
@@ -59,7 +63,12 @@
               <a href="http://www.linkedin.com/in/isaac-schultz-1b20ab43" class="footer-link">LinkedIn</a>
             </div>
             <div class="footer-theme-row">
-              <button type="button" id="theme-toggle" class="footer-link theme-toggle" aria-pressed="false">Dark mode</button>
+              <button type="button" id="theme-toggle" class="footer-link theme-toggle" aria-label="Dark mode" aria-pressed="false">
+                <svg class="theme-toggle-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+                  <circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8 1.5 A6.5 6.5 0 0 1 8 14.5 Z" fill="currentColor"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -75,8 +84,8 @@
 
         function render() {
           var dark = root.getAttribute("data-theme") === "dark";
-          toggle.textContent = dark ? "Light mode" : "Dark mode";
           toggle.setAttribute("aria-pressed", dark ? "true" : "false");
+          toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
         }
 
         toggle.addEventListener("click", function () {
