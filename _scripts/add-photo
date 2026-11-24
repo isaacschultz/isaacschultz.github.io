@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Add photos to a gallery: resize, strip location data, make a thumbnail,
-write the .md file.
+"""Add photos to a gallery or a blog post: resize, strip location data, and
+(for galleries) make a thumbnail and write the .md file.
 
     _scripts/add-photo street ~/Downloads/*.jpg
     _scripts/add-photo architecture IMG_1234.HEIC --title "Harbour Bridge"
     _scripts/add-photo --tidy
+    _scripts/add-photo --post 2026-11-24-my-post ~/Downloads/IMG_1234.HEIC --copy
 
 For each photo this:
   - resizes it to at most 2000px on the long edge (never enlarges)
@@ -21,6 +22,12 @@ HEIC, PNG and TIFF are converted to JPEG. Then run _scripts/publish.
 
 --tidy checks photos already in the galleries (for example ones copied in
 by hand): it shrinks any larger than 2000px and makes missing thumbnails.
+
+--post puts photos in a blog post instead of a gallery. Each one is resized
+to fit the post column (1500px wide, sharp on retina screens), stripped of
+metadata, saved in assets/posts/<post>/, and the Markdown to paste into the
+post is printed (and copied to the clipboard with --copy). The post is named
+by its filename, e.g. 2026-11-24-my-post. Use --title to set the alt text.
 """
 
 import argparse
@@ -41,8 +48,10 @@ MAX_EDGE = 2000          # full-size photo, long edge
 QUALITY = 85
 THUMB_BOX = (1200, 1800)  # grid thumbnail: up to 1200 wide, sharp on retina screens
 THUMB_QUALITY = 80
+POST_BOX = (1500, 2000)   # post column is at most 725px wide; 2x for retina
 ROOT = Path(__file__).resolve().parent.parent
 PHOTOS = ROOT / "assets" / "photographs"
+POST_IMAGES = ROOT / "assets" / "posts"
 
 # Tidier names for the camera makes that EXIF stores in capitals
 MAKES = {
@@ -187,6 +196,42 @@ def add(src, category, title, tmpdir):
           f"{', ' + camera if camera else ''}")
 
 
+def find_post(name):
+    """Accept '2026-11-24-my-post', '...my-post.md' or '_posts/...my-post.md'."""
+    stem = Path(name).name
+    if stem.endswith(".md"):
+        stem = stem[:-3]
+    if not (ROOT / "_posts" / f"{stem}.md").exists():
+        recent = sorted((p.stem for p in (ROOT / "_posts").glob("*.md")), reverse=True)[:5]
+        sys.exit(f"No post called '{stem}'. Recent posts:\n  " + "\n  ".join(recent))
+    return stem
+
+
+def add_to_post(src, post, title, tmpdir):
+    """Resize and clean a photo for a post; returns the Markdown to paste."""
+    slug = slugify(title or src.stem)
+    if not slug:
+        raise ValueError("couldn't make a filename from it; rename it or use --title")
+    alt = title or titleise(slug)
+
+    folder = POST_IMAGES / post
+    image_path = folder / f"{slug}.jpg"
+    n = 2
+    while image_path.exists():  # never overwrite: harbour.jpg, harbour-2.jpg, ...
+        image_path = folder / f"{slug}-{n}.jpg"
+        n += 1
+
+    im, icc = prepare(open_image(src, tmpdir))
+    im.thumbnail(POST_BOX, Image.LANCZOS)
+    save_jpeg(im, image_path, icc, QUALITY)
+
+    print(f"  ✓ {src.name} -> {image_path.relative_to(ROOT)}  "
+          f"{im.width}x{im.height}, {mb(src):.1f} MB -> {mb(image_path):.2f} MB")
+    url = "/" + image_path.relative_to(ROOT).as_posix()
+    alt = alt.replace("[", "(").replace("]", ")")
+    return f'![{alt}]({url}){{: loading="lazy"}}'
+
+
 def tidy(cats):
     """Shrink oversized gallery photos and create any missing thumbnails."""
     changed = 0
@@ -228,7 +273,47 @@ def main():
     parser.add_argument("--title", help="title for the photo (only with a single photo)")
     parser.add_argument("--tidy", action="store_true",
                         help="shrink oversized gallery photos and make missing thumbnails")
+    parser.add_argument("--post", metavar="POST",
+                        help="add the photos to this blog post instead of a gallery")
+    parser.add_argument("--copy", action="store_true",
+                        help="with --post: copy the Markdown to the clipboard")
     args = parser.parse_args()
+
+    if args.post:
+        if args.tidy:
+            parser.error("--post and --tidy can't be used together")
+        # With --post there's no category, so every positional is a photo
+        photos = ([Path(args.category)] if args.category else []) + args.photos
+        if not photos:
+            parser.error("give at least one photo, e.g. "
+                         "_scripts/add-photo --post 2026-11-24-my-post photo.jpg")
+        if args.title and len(photos) > 1:
+            parser.error("--title only works with one photo at a time")
+        post = find_post(args.post)
+        snippets, failed = [], 0
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for src in photos:
+                src = src.expanduser()
+                try:
+                    if not src.is_file():
+                        raise ValueError("file not found")
+                    snippets.append(add_to_post(src, post, args.title, tmpdir))
+                except Exception as err:
+                    print(f"  ✗ {src.name}: {err}")
+                    failed += 1
+        if snippets:
+            markdown = "\n\n".join(snippets)
+            print(f"\nPaste this into _posts/{post}.md where you want the photo"
+                  f"{'s' if len(snippets) > 1 else ''}:\n\n{markdown}\n")
+            if args.copy:
+                subprocess.run(["pbcopy"], input=markdown.encode(), check=False)
+                print("(Copied to the clipboard.)")
+            print("The text in [square brackets] is the alt text read out by screen "
+                  "readers: change it to describe the photo.")
+        sys.exit(1 if failed and not snippets else 0)
+
+    if args.copy:
+        parser.error("--copy only works with --post")
 
     if args.tidy:
         if args.category or args.photos or args.title:
