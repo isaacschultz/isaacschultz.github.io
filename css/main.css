@@ -506,7 +506,7 @@ html[data-theme="dark"] {
 }
 
 html[data-theme="dark"] body {
-  color: #ded7c9;
+  color: #f1f1f1;
   background-color: #0d0d0d;
 }
 
@@ -528,7 +528,7 @@ html[data-theme="dark"] .footer-link:hover {
 html[data-theme="dark"] .posts a,
 html[data-theme="dark"] .footer-link,
 html[data-theme="dark"] #title {
-  color: #ded7c9;
+  color: #f1f1f1;
 }
 
 /* Visited links in posts and the sidebar post list (not footer nav) */
