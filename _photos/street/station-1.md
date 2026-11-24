@@ -5,7 +5,7 @@ category: "street"
 priority: 2
 image: "station-1.jpg"
 exif:
-  camera: "Fuji X-T20"
+  camera: "Fujifilm X-T20"
   location:
     name: "Station 1"
 ---

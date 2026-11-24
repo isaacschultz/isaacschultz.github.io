@@ -5,7 +5,7 @@ category: "architecture"
 priority: 2
 image: "the-grace.jpg"
 exif:
-  camera: "Pentax X-T20"
+  camera: "Fujifilm X-T20"
   location:
     name: "The Grace"
 ---

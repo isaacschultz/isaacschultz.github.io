@@ -5,7 +5,7 @@ category: "street"
 priority: 2
 image: "wynyard.jpg"
 exif:
-  camera: "Pentax X-T20"
+  camera: "Fujifilm X-T20"
   location:
     name: "Wynyard"
 ---

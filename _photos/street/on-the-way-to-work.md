@@ -5,7 +5,7 @@ category: "street"
 priority: 1
 image: "on-the-way-to-work.jpg"
 exif:
-  camera: "Fuji X-T20"
+  camera: "Samsung Galaxy S24"
   location:
     name: "On the way to work"
 ---

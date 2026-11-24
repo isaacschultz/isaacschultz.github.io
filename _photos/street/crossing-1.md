@@ -5,7 +5,7 @@ category: "street"
 priority: 1
 image: "crossing-1.jpg"
 exif:
-  camera: "Fuji X-T20"
+  camera: "Samsung Galaxy S24"
   location:
     name: "Crossing 1"
 ---
