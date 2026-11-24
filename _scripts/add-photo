@@ -1,19 +1,26 @@
 #!/usr/bin/env python3
-"""Add photos to a gallery: resize, strip location data, write the .md file.
+"""Add photos to a gallery: resize, strip location data, make a thumbnail,
+write the .md file.
 
     _scripts/add-photo street ~/Downloads/*.jpg
     _scripts/add-photo architecture IMG_1234.HEIC --title "Harbour Bridge"
+    _scripts/add-photo --tidy
 
 For each photo this:
   - resizes it to at most 2000px on the long edge (never enlarges)
   - removes all metadata (GPS location, serial numbers, etc.), keeping only
     the colour profile so colours look the same
-  - saves it as assets/photographs/<category>/<name>.jpg
+  - saves it as assets/photographs/<category>/<name>.jpg (opened on click)
+  - saves a smaller copy as assets/photographs/<category>/thumbs/<name>.jpg
+    (shown in the gallery grid, so pages load quickly)
   - writes _photos/<category>/<name>.md with the title, year and camera
 
 The name comes from the filename ("on the way.jpg" -> on-the-way.jpg,
 title "On The Way"), so rename files first if you want nicer titles.
 HEIC, PNG and TIFF are converted to JPEG. Then run _scripts/publish.
+
+--tidy checks photos already in the galleries (for example ones copied in
+by hand): it shrinks any larger than 2000px and makes missing thumbnails.
 """
 
 import argparse
@@ -30,9 +37,12 @@ try:
 except ImportError:
     sys.exit("This needs Pillow. Install it with:  python3 -m pip install --user Pillow")
 
-MAX_EDGE = 2000
+MAX_EDGE = 2000          # full-size photo, long edge
 QUALITY = 85
+THUMB_BOX = (1200, 1800)  # grid thumbnail: up to 1200 wide, sharp on retina screens
+THUMB_QUALITY = 80
 ROOT = Path(__file__).resolve().parent.parent
+PHOTOS = ROOT / "assets" / "photographs"
 
 # Tidier names for the camera makes that EXIF stores in capitals
 MAKES = {
@@ -102,36 +112,61 @@ def open_image(src, tmpdir):
         return Image.open(out)
 
 
+def prepare(im):
+    """Upright RGB copy with the colour profile noted; drops all other metadata."""
+    icc = im.info.get("icc_profile")
+    im = ImageOps.exif_transpose(im)  # bake in rotation before dropping EXIF
+    if im.mode != "RGB":
+        im = im.convert("RGB")
+    return im, icc
+
+
+def save_jpeg(im, path, icc, quality):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    options = dict(quality=quality, optimize=True, progressive=True)
+    if icc:
+        options["icc_profile"] = icc
+    im.save(path, "JPEG", **options)  # no exif= argument, so no metadata
+
+
+def save_thumb(im, path, icc):
+    thumb = im.copy()
+    thumb.thumbnail(THUMB_BOX, Image.LANCZOS)
+    save_jpeg(thumb, path, icc, THUMB_QUALITY)
+    return thumb
+
+
+def thumb_path(image_path):
+    return image_path.parent / "thumbs" / image_path.name
+
+
+def mb(path):
+    return path.stat().st_size / 1e6
+
+
 def add(src, category, title, tmpdir):
     slug = slugify(title or src.stem)
     if not slug:
         raise ValueError("couldn't make a filename from it; rename it or use --title")
     title = title or titleise(slug)
 
-    image_path = ROOT / "assets" / "photographs" / category / f"{slug}.jpg"
+    image_path = PHOTOS / category / f"{slug}.jpg"
     md_path = ROOT / "_photos" / category / f"{slug}.md"
-    for existing in (image_path, md_path):
+    for existing in (image_path, thumb_path(image_path), md_path):
         if existing.exists():
             raise ValueError(f"{existing.relative_to(ROOT)} already exists")
 
-    im = open_image(src, tmpdir)
-    exif = im.getexif()
+    original = open_image(src, tmpdir)
+    exif = original.getexif()
     camera = camera_name(exif)
     year = photo_year(exif)
-    icc = im.info.get("icc_profile")
 
-    im = ImageOps.exif_transpose(im)  # bake in rotation before dropping EXIF
-    if im.mode != "RGB":
-        im = im.convert("RGB")
+    im, icc = prepare(original)
     im.thumbnail((MAX_EDGE, MAX_EDGE), Image.LANCZOS)
+    save_jpeg(im, image_path, icc, QUALITY)
+    save_thumb(im, thumb_path(image_path), icc)
 
-    image_path.parent.mkdir(parents=True, exist_ok=True)
     md_path.parent.mkdir(parents=True, exist_ok=True)
-    save = dict(quality=QUALITY, optimize=True, progressive=True)
-    if icc:
-        save["icc_profile"] = icc
-    im.save(image_path, "JPEG", **save)  # no exif= argument, so no metadata
-
     lines = [
         "---",
         f"title: {yaml_str(title)}",
@@ -146,11 +181,40 @@ def add(src, category, title, tmpdir):
     lines += ["  location:", f"    name: {yaml_str(title)}", "---", ""]
     md_path.write_text("\n".join(lines))
 
-    before = src.stat().st_size / 1e6
-    after = image_path.stat().st_size / 1e6
     print(f"  ✓ {src.name} -> {image_path.relative_to(ROOT)}  "
-          f"{im.width}x{im.height}, {before:.1f} MB -> {after:.1f} MB"
+          f"{im.width}x{im.height}, {mb(src):.1f} MB -> {mb(image_path):.1f} MB "
+          f"(thumbnail {mb(thumb_path(image_path)):.2f} MB)"
           f"{', ' + camera if camera else ''}")
+
+
+def tidy(cats):
+    """Shrink oversized gallery photos and create any missing thumbnails."""
+    changed = 0
+    for category in cats:
+        for image_path in sorted((PHOTOS / category).glob("*.jpg")):
+            notes = []
+            with Image.open(image_path) as original:
+                too_big = max(original.size) > MAX_EDGE
+                needs_thumb = not thumb_path(image_path).exists()
+                if not (too_big or needs_thumb):
+                    continue
+                before = mb(image_path)
+                im, icc = prepare(original)
+            if too_big:
+                im.thumbnail((MAX_EDGE, MAX_EDGE), Image.LANCZOS)
+                save_jpeg(im, image_path, icc, QUALITY)
+                notes.append(f"resized to {im.width}x{im.height}, "
+                             f"{before:.1f} MB -> {mb(image_path):.1f} MB")
+            if needs_thumb:
+                thumb = save_thumb(im, thumb_path(image_path), icc)
+                notes.append(f"thumbnail {thumb.width}x{thumb.height}, "
+                             f"{mb(thumb_path(image_path)):.2f} MB")
+            print(f"  ✓ {image_path.relative_to(PHOTOS)}: {'; '.join(notes)}")
+            changed += 1
+    print(f"\n{changed} photo{'s' if changed != 1 else ''} updated." if changed
+          else "All gallery photos are already sized and have thumbnails.")
+    if changed:
+        print("Check them, then run: _scripts/publish")
 
 
 def main():
@@ -159,11 +223,22 @@ def main():
         description="Add photos to a gallery.",
         epilog=f"Categories: {', '.join(cats)}",
     )
-    parser.add_argument("category", help="gallery to add to: " + ", ".join(cats))
-    parser.add_argument("photos", nargs="+", type=Path, help="image files")
+    parser.add_argument("category", nargs="?", help="gallery to add to: " + ", ".join(cats))
+    parser.add_argument("photos", nargs="*", type=Path, help="image files")
     parser.add_argument("--title", help="title for the photo (only with a single photo)")
+    parser.add_argument("--tidy", action="store_true",
+                        help="shrink oversized gallery photos and make missing thumbnails")
     args = parser.parse_args()
 
+    if args.tidy:
+        if args.category or args.photos or args.title:
+            parser.error("--tidy works on its own: _scripts/add-photo --tidy")
+        tidy(cats)
+        return
+
+    if not args.category or not args.photos:
+        parser.error("give a category and at least one photo, e.g. "
+                     "_scripts/add-photo street ~/Downloads/photo.jpg")
     if args.category not in cats:
         parser.error(f"unknown category '{args.category}'. Choose from: {', '.join(cats)}")
     if args.title and len(args.photos) > 1:

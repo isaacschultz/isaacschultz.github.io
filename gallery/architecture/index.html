@@ -10,7 +10,7 @@ permalink: /gallery/architecture/index.html
   {% for photo in sorted_photos %}
 	<div class="photo">
 		<a href="/assets/photographs/architecture/{{ photo.image }}" target="_blank">
-		  <img src="/assets/photographs/architecture/{{ photo.image }}" alt="{{ photo.title }}" loading="lazy" width="800" height="600" />
+		  <img src="/assets/photographs/architecture/thumbs/{{ photo.image }}" alt="{{ photo.title }}" loading="lazy" width="800" height="600" />
 		</a>
 	</div>
   {% endfor %}
