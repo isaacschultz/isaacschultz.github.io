@@ -1,0 +1,86 @@
+#!/bin/bash
+# Create a new blog post with its front matter filled in, then open it.
+#
+#   _scripts/new-post "My post title"
+#   _scripts/new-post "My post title" --no-edit
+#
+# The editor comes from $VISUAL or $EDITOR; without either, the file opens
+# in the default app for .md files.
+
+set -euo pipefail
+
+usage() {
+  echo "Usage: _scripts/new-post \"Post title\" [--no-edit]" >&2
+  exit 1
+}
+
+title=""
+edit=1
+for arg in "$@"; do
+  case "$arg" in
+    --no-edit) edit=0 ;;
+    -h|--help) usage ;;
+    -*) echo "Unknown option: $arg" >&2; usage ;;
+    *)
+      if [ -n "$title" ]; then
+        echo "Put the title in quotes: _scripts/new-post \"Two words\"" >&2
+        exit 1
+      fi
+      title="$arg"
+      ;;
+  esac
+done
+[ -n "$title" ] || usage
+
+root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$root"
+
+# "Café Notes: Part 2!" -> "cafe-notes-part-2"
+# iconv exits non-zero whenever it transliterates (é -> 'e), so ignore that,
+# then drop the accent marks it leaves behind.
+slug="$(printf '%s' "$title" \
+  | { iconv -f UTF-8 -t ASCII//TRANSLIT 2>/dev/null || true; } \
+  | tr -d "'\"\`^~" \
+  | tr '[:upper:]' '[:lower:]' \
+  | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')"
+if [ -z "$slug" ]; then
+  echo "Couldn't make a filename from that title. Use some letters or numbers." >&2
+  exit 1
+fi
+
+# Filename and front matter dates come from the same clock, so they always agree.
+day="$(date +%Y-%m-%d)"
+stamp="$(date '+%Y-%m-%d %H:%M:%S %z')"
+file="_posts/$day-$slug.md"
+
+if [ -e "$file" ]; then
+  echo "$file already exists." >&2
+  exit 1
+fi
+
+# Escape backslashes and double quotes for the YAML string
+yaml_title="$(printf '%s' "$title" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')"
+
+cat > "$file" <<EOF
+---
+layout: post
+title: "$yaml_title"
+cover: null.png
+date: $stamp
+categories: posts
+---
+
+EOF
+
+echo "Created $file"
+
+if [ "$edit" -eq 1 ]; then
+  editor="${VISUAL:-${EDITOR:-}}"
+  if [ -n "$editor" ]; then
+    $editor "$file"
+  else
+    open "$file" 2>/dev/null || open -t "$file"
+  fi
+fi
+
+echo "When it's ready: _scripts/publish"

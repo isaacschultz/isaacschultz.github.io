@@ -14,6 +14,7 @@ plugins: [jekyll-paginate]
 
 highlight: rouge
 markdown: kramdown
+timezone: Australia/Sydney
 name: isaacschultz
 url: "https://www.isaacschultz.com"
 paginate: 3

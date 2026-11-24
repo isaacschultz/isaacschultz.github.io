@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+"""Add photos to a gallery: resize, strip location data, write the .md file.
+
+    _scripts/add-photo street ~/Downloads/*.jpg
+    _scripts/add-photo architecture IMG_1234.HEIC --title "Harbour Bridge"
+
+For each photo this:
+  - resizes it to at most 2000px on the long edge (never enlarges)
+  - removes all metadata (GPS location, serial numbers, etc.), keeping only
+    the colour profile so colours look the same
+  - saves it as assets/photographs/<category>/<name>.jpg
+  - writes _photos/<category>/<name>.md with the title, year and camera
+
+The name comes from the filename ("on the way.jpg" -> on-the-way.jpg,
+title "On The Way"), so rename files first if you want nicer titles.
+HEIC, PNG and TIFF are converted to JPEG. Then run _scripts/publish.
+"""
+
+import argparse
+import re
+import subprocess
+import sys
+import tempfile
+import unicodedata
+from datetime import date
+from pathlib import Path
+
+try:
+    from PIL import Image, ImageOps
+except ImportError:
+    sys.exit("This needs Pillow. Install it with:  python3 -m pip install --user Pillow")
+
+MAX_EDGE = 2000
+QUALITY = 85
+ROOT = Path(__file__).resolve().parent.parent
+
+# Tidier names for the camera makes that EXIF stores in capitals
+MAKES = {
+    "FUJIFILM": "Fujifilm",
+    "NIKON CORPORATION": "Nikon",
+    "NIKON": "Nikon",
+    "PENTAX": "Pentax",
+    "RICOH IMAGING COMPANY, LTD.": "Ricoh",
+    "SONY": "Sony",
+    "OLYMPUS CORPORATION": "Olympus",
+    "OM DIGITAL SOLUTIONS": "OM System",
+    "CANON": "Canon",
+    "LEICA CAMERA AG": "Leica",
+}
+
+
+def categories():
+    """Category slugs from _data/gallery_categories.yml."""
+    text = (ROOT / "_data" / "gallery_categories.yml").read_text()
+    return re.findall(r'^\s*-?\s*slug:\s*"?([\w-]+)"?', text, re.MULTILINE)
+
+
+def slugify(text):
+    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def titleise(slug):
+    return " ".join(word.capitalize() for word in slug.split("-"))
+
+
+def camera_name(exif):
+    make = (exif.get(0x010F) or "").strip().strip("\x00")
+    model = (exif.get(0x0110) or "").strip().strip("\x00")
+    if not model:
+        return ""
+    make = MAKES.get(make.upper(), make.split(" ")[0].title() if make else "")
+    # Some cameras repeat the make in the model ("PENTAX K-30", "Canon EOS R5")
+    first = model.split(" ")[0]
+    if make and first.lower() == make.lower():
+        model = model[len(first):].strip()
+    return f"{make} {model}".strip()
+
+
+def photo_year(exif):
+    taken = exif.get_ifd(0x8769).get(0x9003) or exif.get(0x0132) or ""
+    match = re.match(r"(\d{4}):", str(taken))
+    return int(match.group(1)) if match else date.today().year
+
+
+def yaml_str(value):
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def open_image(src, tmpdir):
+    """Open with Pillow, converting via macOS sips for formats it can't read (HEIC)."""
+    try:
+        return Image.open(src)
+    except Exception:
+        out = Path(tmpdir) / (src.stem + ".jpg")
+        result = subprocess.run(
+            ["sips", "-s", "format", "jpeg", str(src), "--out", str(out)],
+            capture_output=True,
+        )
+        if result.returncode != 0 or not out.exists():
+            raise ValueError("not an image this script can read")
+        return Image.open(out)
+
+
+def add(src, category, title, tmpdir):
+    slug = slugify(title or src.stem)
+    if not slug:
+        raise ValueError("couldn't make a filename from it; rename it or use --title")
+    title = title or titleise(slug)
+
+    image_path = ROOT / "assets" / "photographs" / category / f"{slug}.jpg"
+    md_path = ROOT / "_photos" / category / f"{slug}.md"
+    for existing in (image_path, md_path):
+        if existing.exists():
+            raise ValueError(f"{existing.relative_to(ROOT)} already exists")
+
+    im = open_image(src, tmpdir)
+    exif = im.getexif()
+    camera = camera_name(exif)
+    year = photo_year(exif)
+    icc = im.info.get("icc_profile")
+
+    im = ImageOps.exif_transpose(im)  # bake in rotation before dropping EXIF
+    if im.mode != "RGB":
+        im = im.convert("RGB")
+    im.thumbnail((MAX_EDGE, MAX_EDGE), Image.LANCZOS)
+
+    image_path.parent.mkdir(parents=True, exist_ok=True)
+    md_path.parent.mkdir(parents=True, exist_ok=True)
+    save = dict(quality=QUALITY, optimize=True, progressive=True)
+    if icc:
+        save["icc_profile"] = icc
+    im.save(image_path, "JPEG", **save)  # no exif= argument, so no metadata
+
+    lines = [
+        "---",
+        f"title: {yaml_str(title)}",
+        f"year: {year}",
+        f'category: "{category}"',
+        "priority: 2",
+        f'image: "{slug}.jpg"',
+        "exif:",
+    ]
+    if camera:
+        lines.append(f"  camera: {yaml_str(camera)}")
+    lines += ["  location:", f"    name: {yaml_str(title)}", "---", ""]
+    md_path.write_text("\n".join(lines))
+
+    before = src.stat().st_size / 1e6
+    after = image_path.stat().st_size / 1e6
+    print(f"  ✓ {src.name} -> {image_path.relative_to(ROOT)}  "
+          f"{im.width}x{im.height}, {before:.1f} MB -> {after:.1f} MB"
+          f"{', ' + camera if camera else ''}")
+
+
+def main():
+    cats = categories()
+    parser = argparse.ArgumentParser(
+        description="Add photos to a gallery.",
+        epilog=f"Categories: {', '.join(cats)}",
+    )
+    parser.add_argument("category", help="gallery to add to: " + ", ".join(cats))
+    parser.add_argument("photos", nargs="+", type=Path, help="image files")
+    parser.add_argument("--title", help="title for the photo (only with a single photo)")
+    args = parser.parse_args()
+
+    if args.category not in cats:
+        parser.error(f"unknown category '{args.category}'. Choose from: {', '.join(cats)}")
+    if args.title and len(args.photos) > 1:
+        parser.error("--title only works with one photo at a time")
+
+    added = failed = 0
+    with tempfile.TemporaryDirectory() as tmpdir:
+        for src in args.photos:
+            src = src.expanduser()
+            try:
+                if not src.is_file():
+                    raise ValueError("file not found")
+                add(src, args.category, args.title, tmpdir)
+                added += 1
+            except Exception as err:
+                print(f"  ✗ {src.name}: {err}")
+                failed += 1
+
+    print(f"\nAdded {added} photo{'s' if added != 1 else ''}"
+          f"{f', {failed} skipped' if failed else ''}.")
+    if added:
+        print("Check them, then run: _scripts/publish")
+    sys.exit(1 if failed and not added else 0)
+
+
+if __name__ == "__main__":
+    main()

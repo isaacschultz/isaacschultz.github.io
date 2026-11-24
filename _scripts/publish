@@ -1,0 +1,93 @@
+#!/bin/bash
+# Commit every change in the site and push it to master, which GitHub Pages
+# then deploys. Shows what will go up and asks before doing anything.
+#
+#   _scripts/publish                     # message is worked out for you
+#   _scripts/publish "Fix typo in post"  # or give your own
+
+set -euo pipefail
+
+root="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$root"
+
+site="$(sed -n -E 's/^url:[[:space:]]*"?([^"]*)"?[[:space:]]*$/\1/p' _config.yml)"
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$branch" != "master" ]; then
+  echo "You're on '$branch'. The site deploys from master: run 'git switch master' first." >&2
+  exit 1
+fi
+
+git add -A
+
+if git diff --cached --quiet; then
+  echo "Nothing to publish."
+  exit 0
+fi
+
+echo "About to publish:"
+git diff --cached --name-status | sed 's/^/  /'
+echo
+
+# New posts in this commit, as "_posts/YYYY-MM-DD-slug.md"
+new_posts="$(git diff --cached --name-only --diff-filter=A -- _posts)"
+post_count=0
+[ -n "$new_posts" ] && post_count="$(printf '%s\n' "$new_posts" | wc -l | tr -d ' ')"
+
+# Read the title from front matter, unwrapping YAML quotes if present
+post_title() {
+  local t
+  t="$(sed -n -E '/^---/,/^---/{s/^title:[[:space:]]*//p;}' "$1" | head -1)"
+  case "$t" in
+    \"*\") t="${t#\"}"; t="${t%\"}"; t="$(printf '%s' "$t" | sed -e 's/\\"/"/g' -e 's/\\\\/\\/g')" ;;
+    \'*\') t="${t#\'}"; t="${t%\'}" ;;
+  esac
+  printf '%s' "$t"
+}
+
+# New photos (from add-photo), as "_photos/<category>/<name>.md"
+new_photos="$(git diff --cached --name-only --diff-filter=A -- _photos)"
+photo_count=0
+[ -n "$new_photos" ] && photo_count="$(printf '%s\n' "$new_photos" | wc -l | tr -d ' ')"
+photo_cats="$(printf '%s\n' "$new_photos" | awk -F/ 'NF>2 {print $2}' | sort -u | paste -sd, - | sed 's/,/, /g')"
+
+if [ $# -gt 0 ]; then
+  message="$*"
+elif [ "$post_count" -eq 1 ] && [ "$photo_count" -eq 0 ]; then
+  message="Add \"$(post_title "$new_posts")\" post"
+elif [ "$post_count" -gt 1 ] && [ "$photo_count" -eq 0 ]; then
+  message="Add $post_count posts"
+elif [ "$photo_count" -eq 1 ] && [ "$post_count" -eq 0 ]; then
+  message="Add photo to $photo_cats"
+elif [ "$photo_count" -gt 1 ] && [ "$post_count" -eq 0 ]; then
+  message="Add $photo_count photos to $photo_cats"
+else
+  message="Update site"
+fi
+
+echo "Commit message: $message"
+printf "Publish? [y/N] "
+read -r answer
+case "$answer" in
+  y|Y|yes|YES) ;;
+  *)
+    git reset -q
+    echo "Cancelled. Nothing was committed."
+    exit 0
+    ;;
+esac
+
+git commit -q -m "$message"
+# Pick up anything pushed from elsewhere (e.g. edits on github.com) first
+git pull -q --rebase origin master
+git push -q origin master
+
+echo
+echo "Pushed. GitHub Pages usually updates within a minute or two."
+if [ -n "$new_posts" ]; then
+  printf '%s\n' "$new_posts" | while read -r f; do
+    name="$(basename "$f" .md)"            # 2026-11-24-my-post
+    y="${name:0:4}"; m="${name:5:2}"; d="${name:8:2}"; slug="${name:11}"
+    echo "  $site/posts/$y/$m/$d/$slug.html"
+  done
+fi
