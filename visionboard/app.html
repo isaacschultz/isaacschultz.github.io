@@ -4,62 +4,69 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vision Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <script>
-  // Apply saved/system theme before paint to avoid a flash of the wrong theme.
-  (function () {
+  // Follow the website's theme. Inside the site's page, copy the page's
+  // data-theme; opened on its own, use the site's saved choice (dark unless
+  // "light" is stored, the same default as the site). Runs before first paint.
+  window.siteTheme = function () {
     try {
-      var t = localStorage.getItem("vision-board:theme");
-      if (t !== "dark" && t !== "light") {
-        t = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      if (window.parent !== window) {
+        return window.parent.document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
       }
-      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { /* parent not reachable: fall through */ }
+    try {
+      return localStorage.getItem("theme") === "light" ? "light" : "dark";
     } catch (e) {
-      document.documentElement.setAttribute("data-theme", "light");
+      return "dark";
     }
-  })();
+  };
+  document.documentElement.setAttribute("data-theme", window.siteTheme());
 </script>
 <style>
+  /* Neutrals match the website: off-white and #4a4a4a text in light mode,
+     #0d0d0d and #f1f1f1 in dark mode */
   :root {
-    --bg: #eef1f5;
+    --bg: #fafbfc;
     --panel: #ffffff;
     --board-bg: #ffffff;
-    --ink: #1f2430;
-    --muted: #8a93a3;
-    --border: #d8dce4;
-    --border-hover: #c7cdd8;
-    --border-soft: #e6e9ef;
+    --ink: #4a4a4a;
+    --muted: #8a8a8a;
+    --border: #dcdcdc;
+    --border-hover: #c8c8c8;
+    --border-soft: #ebebeb;
     --btn-bg: #ffffff;
-    --btn-hover: #f5f7fa;
-    --pill-bg: #f3f5f8;
+    --btn-hover: #f4f4f4;
+    --pill-bg: #f3f3f3;
     --kbd-bg: #ffffff;
-    --accent: #3b82f6;
-    --accent-hover: #2f74ec;
+    --accent: #e01010;        /* logo red, deepened slightly so white text stays readable */
+    --accent-hover: #c81010;
     --danger: #ef4444;
     --danger-soft: #fef2f2;
     --danger-border: #f4b4b4;
-    --empty-title: #5b6472;
-    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.10);
+    --empty-title: #5a5a5a;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.08);
   }
 
   html[data-theme="dark"] {
-    --bg: #13161b;
-    --panel: #1b2027;
-    --board-bg: #181c22;
-    --ink: #e7eaf0;
-    --muted: #8b95a5;
-    --border: #2d343d;
-    --border-hover: #3a424d;
-    --border-soft: #262c34;
-    --btn-bg: #232932;
-    --btn-hover: #2c333d;
-    --pill-bg: #232932;
-    --kbd-bg: #2c333d;
-    --accent: #4f8ff7;
-    --accent-hover: #6aa1f8;
+    --bg: #0d0d0d;
+    --panel: #141414;
+    --board-bg: #181818;
+    --ink: #f1f1f1;
+    --muted: #9a9a9a;
+    --border: #2e2e2e;
+    --border-hover: #3d3d3d;
+    --border-soft: #242424;
+    --btn-bg: #1c1c1c;
+    --btn-hover: #262626;
+    --pill-bg: #1c1c1c;
+    --kbd-bg: #262626;
+    --accent: #f41616;        /* the logo red */
+    --accent-hover: #ff3b3b;
     --danger: #f0616d;
-    --danger-soft: #36262a;
-    --danger-border: #5e3940;
-    --empty-title: #aab2c0;
+    --danger-soft: #2a1718;
+    --danger-border: #5a2b2f;
+    --empty-title: #b5b5b5;
     --shadow: 0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.55);
   }
 
@@ -68,7 +75,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Ubuntu Mono', monospace;
     color: var(--ink);
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
@@ -104,9 +111,8 @@
     user-select: none;
   }
   .brand .dot {
-    width: 18px; height: 18px; border-radius: 6px;
-    background: linear-gradient(135deg, #6366f1, #3b82f6 55%, #06b6d4);
-    box-shadow: 0 2px 6px rgba(59,130,246,.4);
+    width: 18px; height: 18px; border-radius: 0;
+    background: var(--accent);
   }
 
   .spacer { flex: 1 1 auto; }
@@ -120,7 +126,7 @@
     font-size: 13.5px;
     font-weight: 550;
     padding: 7px 13px;
-    border-radius: 9px;
+    border-radius: 0;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -157,7 +163,7 @@
     background: var(--pill-bg);
     border: 1px solid var(--border-soft);
     padding: 5px 10px;
-    border-radius: 999px;
+    border-radius: 0;
     user-select: none;
   }
   kbd {
@@ -166,15 +172,10 @@
     background: var(--kbd-bg);
     border: 1px solid var(--border);
     border-bottom-width: 2px;
-    border-radius: 5px;
+    border-radius: 0;
     padding: 1px 5px;
     color: var(--ink);
   }
-
-  /* theme toggle icons (selectors out-specify `.btn svg` so the toggle wins) */
-  .btn svg.theme-sun { display: none; }
-  html[data-theme="dark"] .btn svg.theme-moon { display: none; }
-  html[data-theme="dark"] .btn svg.theme-sun { display: block; }
 
   /* ---- Stage / Board ---- */
   .stage {
@@ -189,7 +190,7 @@
     width: 100%;
     height: 100%;
     background: var(--board-bg);
-    border-radius: 14px;
+    border-radius: 0;
     box-shadow: var(--shadow);
     overflow: hidden;
     transition: background .15s;
@@ -200,8 +201,8 @@
     position: absolute;
     inset: 10px;
     border: 2.5px dashed var(--accent);
-    border-radius: 10px;
-    background: rgba(59,130,246,.06);
+    border-radius: 0;
+    background: rgba(244,22,22,.06);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -238,7 +239,7 @@
     position: absolute;
     touch-action: none;
     cursor: grab;
-    border-radius: 3px;
+    border-radius: 0;
     box-shadow: 0 2px 8px rgba(16,24,40,.18);
     user-select: none;
   }
@@ -247,7 +248,7 @@
     height: 100%;
     display: block;
     pointer-events: none;
-    border-radius: 3px;
+    border-radius: 0;
     -webkit-user-drag: none;
   }
   .item.dragging { cursor: grabbing; box-shadow: 0 10px 30px rgba(16,24,40,.28); }
@@ -264,7 +265,7 @@
     right: -9px; bottom: -9px;
     background: var(--panel);
     border: 2px solid var(--accent);
-    border-radius: 50%;
+    border-radius: 0;
     cursor: nwse-resize;
     display: none;
     box-shadow: 0 1px 3px rgba(16,24,40,.3);
@@ -280,7 +281,7 @@
     background: var(--danger);
     color: #fff;
     border: 2px solid var(--panel);
-    border-radius: 50%;
+    border-radius: 0;
     cursor: pointer;
     display: none;
     align-items: center;
@@ -300,7 +301,7 @@
     background: #1f2430;
     color: #fff;
     padding: 11px 18px;
-    border-radius: 10px;
+    border-radius: 0;
     font-size: 13.5px;
     box-shadow: 0 8px 28px rgba(0,0,0,.28);
     opacity: 0;
@@ -350,11 +351,6 @@
 
     <span class="hint-pill">Paste <kbd>⌘</kbd>/<kbd>Ctrl</kbd>+<kbd>V</kbd>, drop a file, or Add image</span>
 
-    <button class="btn icon-only" id="themeBtn" title="Switch to dark mode" aria-label="Toggle dark mode" aria-pressed="false">
-      <svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      <svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    </button>
-
     <div class="divider"></div>
 
     <button class="btn" id="clearBtn" title="Remove all images">
@@ -385,7 +381,6 @@
   "use strict";
 
   const STORAGE_KEY = "vision-board:v1";
-  const THEME_KEY = "vision-board:theme";
   const MIN_SIZE = 40;          // smallest allowed edge, px
   const MAX_INIT_FRAC = 0.45;   // a new image starts at most this fraction of the board's smaller edge
 
@@ -393,7 +388,6 @@
   const empty   = document.getElementById("empty");
   const toastEl = document.getElementById("toast");
   const fileInput = document.getElementById("fileInput");
-  const themeBtn = document.getElementById("themeBtn");
 
   const btn = {
     add:    document.getElementById("addBtn"),
@@ -411,19 +405,21 @@
   const els = new Map(); // id -> { root, img, handle, del }
 
   // ---------- theme ----------
-  function currentTheme() {
-    return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  // Switch live when the website's theme toggle is used.
+  function syncTheme() {
+    document.documentElement.setAttribute("data-theme", window.siteTheme());
   }
-  function applyTheme(t) {
-    document.documentElement.setAttribute("data-theme", t);
-    const dark = t === "dark";
-    themeBtn.setAttribute("aria-pressed", String(dark));
-    themeBtn.title = dark ? "Switch to light mode" : "Switch to dark mode";
-  }
-  function toggleTheme() {
-    const next = currentTheme() === "dark" ? "light" : "dark";
-    applyTheme(next);
-    try { localStorage.setItem(THEME_KEY, next); } catch (e) { /* ignore */ }
+  function watchSiteTheme() {
+    try {
+      if (window.parent !== window) {
+        new MutationObserver(syncTheme).observe(window.parent.document.documentElement, {
+          attributes: true, attributeFilter: ["data-theme"],
+        });
+        return;
+      }
+    } catch (e) { /* parent not reachable: fall back to storage events */ }
+    // Opened on its own: pick up changes made in another tab of the site
+    window.addEventListener("storage", (e) => { if (e.key === "theme") syncTheme(); });
   }
 
   // ---------- persistence ----------
@@ -753,7 +749,6 @@
   });
 
   // Toolbar
-  themeBtn.addEventListener("click", toggleTheme);
   btn.add.addEventListener("click", () => fileInput.click());
   btn.front.addEventListener("click", () => selectedId && bringToFront(selectedId));
   btn.back.addEventListener("click", () => selectedId && sendToBack(selectedId));
@@ -820,7 +815,7 @@
   });
 
   // ---------- init ----------
-  applyTheme(currentTheme());
+  watchSiteTheme();
   load();
   updateToolbar();
 })();
