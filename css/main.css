@@ -369,6 +369,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #sidebar-button {
+  color: #4a4a4a;
   height: intrinsic;
   cursor: pointer;
   display: none;
@@ -558,9 +559,9 @@ html[data-theme="dark"] .logo-dark {
   display: inline;
 }
 
-/* Black-ink menu icon on transparency: flip to white */
-html[data-theme="dark"] #sidebar-button img {
-  filter: invert(1);
+/* Menu icon in the logo's red */
+html[data-theme="dark"] #sidebar-button {
+  color: #f41616;
 }
 
 html[data-theme="dark"] .post pre,
