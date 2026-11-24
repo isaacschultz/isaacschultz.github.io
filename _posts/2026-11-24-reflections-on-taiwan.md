@@ -6,7 +6,7 @@ date: 2026-11-24 16:30:53 +1100
 categories: posts
 ---
 
-![Bluetruck](/assets/posts/2026-11-24-reflections-on-taiwan/bluetruck.jpg){: loading="lazy"}
+![Bluetruck](/assets/posts/2026-11-24-reflections-on-taiwan/bluetruck_01.jpg){: loading="lazy"}
 
 Taiwan is an exceptional place. I recently went there with my family for a homecoming trip. I had lived there for nine years (!) during high school, but had not visited for over 15 years.
 
